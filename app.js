@@ -10,11 +10,13 @@ const audio = $("#audio");
 const playBtn = $(".btn-toggle-play");
 const progress = $("#progress");
 const next = $('.btn-next');
-const prev = $('btn-prev');
+const prev = $('.btn-prev');
+const random = $(".btn-random");
 
 const app = {
     currentIndex : 0,
     isPlaying : false,
+    isRandom: false,
     songs: [
         {
           name: "Yêu",
@@ -29,25 +31,16 @@ const app = {
             image: "./assets/images/one-call-away.jpg"
         },
         {
-            name: "Tu Phir Se Aana",
-            singer: "Raftaar x Salim Merchant x Karma",
-            path: "https://mp3.vlcmusic.com/download.php?track_id=34213&format=320",
-            image:
-                "https://1.bp.blogspot.com/-kX21dGUuTdM/X85ij1SBeEI/AAAAAAAAKK4/feboCtDKkls19cZw3glZWRdJ6J8alCm-gCNcBGAsYHQ/s16000/Tu%2BAana%2BPhir%2BSe%2BRap%2BSong%2BLyrics%2BBy%2BRaftaar.jpg"
+            name: "Yến vô hiết",
+            singer: "Là Thất Thúc Đây",
+            path: "./assets/songs/Yen-Vo-Hiet-La-That-Thuc-Day.mp3",
+            image: "./assets/images/yen-ho-hiet.jpg"
         },
         {
-            name: "Tu Phir Se Aana",
-            singer: "Raftaar x Salim Merchant x Karma",
-            path: "https://mp3.vlcmusic.com/download.php?track_id=34213&format=320",
-            image:
-                "https://1.bp.blogspot.com/-kX21dGUuTdM/X85ij1SBeEI/AAAAAAAAKK4/feboCtDKkls19cZw3glZWRdJ6J8alCm-gCNcBGAsYHQ/s16000/Tu%2BAana%2BPhir%2BSe%2BRap%2BSong%2BLyrics%2BBy%2BRaftaar.jpg"
-        },
-        {
-            name: "Tu Phir Se Aana",
-            singer: "Raftaar x Salim Merchant x Karma",
-            path: "https://mp3.vlcmusic.com/download.php?track_id=34213&format=320",
-            image:
-                "https://1.bp.blogspot.com/-kX21dGUuTdM/X85ij1SBeEI/AAAAAAAAKK4/feboCtDKkls19cZw3glZWRdJ6J8alCm-gCNcBGAsYHQ/s16000/Tu%2BAana%2BPhir%2BSe%2BRap%2BSong%2BLyrics%2BBy%2BRaftaar.jpg"
+            name: "Thế giới rộng lớn vẫn tìm thấy anh",
+            singer: "Trình Hưởng",
+            path: "./assets/songs/The-gioi-rong-lon-nhu-vay-nhung-van-gap-duoc-anh-Trinh-Huong.mp3",
+            image: "./assets/images/the-gioi-rong-lon-nhung-van-tim-thay-anh.jpg"
         },
     ],
     render : function(){
@@ -135,8 +128,33 @@ const app = {
 
         //Next song
         next.onclick = function(){
-            _this.nextSong();
+            if(_this.isRandom){
+                _this.randomSong();
+            }else{
+                _this.nextSong();
+            }
             audio.play();
+        }
+
+        //Prev song
+        prev.onclick = function(){
+            if(_this.isRandom){
+                _this.randomSong();
+            }else{
+                _this.prevSong();
+            }
+            audio.play();
+        }
+
+        //Random song
+        random.onclick = function(){
+            _this.isRandom = !_this.isRandom;
+            random.classList.toggle("active", _this.isRandom);
+        }
+
+        //Xử lí khi audio ended
+        audio.onended = function(){
+
         }
     },
     loadCurrentSong: function(){
@@ -146,11 +164,28 @@ const app = {
     },
     nextSong: function(){
         this.currentIndex++;
+        if(this.currentIndex > this.songs.length - 1 ){
+            this.currentIndex = 0;
+        }
         this.loadCurrentSong();  
     },
     prevSong: function(){
         this.currentIndex--;
+        if(this.currentIndex < 0){
+            this.currentIndex = this.songs.length - 1;
+        }
         this.loadCurrentSong();  
+    },
+    randomSong: function () {
+        let arrayIndex = [];
+        let newIndex;
+        do{
+            newIndex = Math.floor(Math.random()*this.songs.length);
+            arrayIndex.splice(0,0,newIndex);
+        }while(newIndex === this.currentIndex);
+        console.log(arrayIndex)
+        // this.currentIndex = newIndex;
+        // this.loadCurrentSong();
     },
     start: function(){
         //Định nghĩa thuộc tính cho object

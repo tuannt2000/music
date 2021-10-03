@@ -174,6 +174,9 @@
   .song .title {
     font-size: 18px;
     color: var(--text-color);
+    white-space: nowrap; 
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
   
   .song .author {
