@@ -12,11 +12,13 @@ const progress = $("#progress");
 const next = $('.btn-next');
 const prev = $('.btn-prev');
 const random = $(".btn-random");
+const repeat = $(".btn-repeat");
 
 const app = {
     currentIndex : 0,
     isPlaying : false,
     isRandom: false,
+    isRepeat : false,
     songs: [
         {
           name: "Yêu",
@@ -45,7 +47,7 @@ const app = {
     ],
     render : function(){
         const htmls = this.songs.map((song, index) => {
-            return `<div class="song" data-index="">
+            return `<div class="song ${index === this.currentIndex ? 'active' : ''}" data-index="">
                         <div class="thumb"
                             style="background-image: url('${song.image}')">
                         </div>
@@ -133,7 +135,9 @@ const app = {
             }else{
                 _this.nextSong();
             }
+            _this.render();
             audio.play();
+            _this.scrollToSongActive();
         }
 
         //Prev song
@@ -143,7 +147,9 @@ const app = {
             }else{
                 _this.prevSong();
             }
+            _this.render();
             audio.play();
+            _this.scrollToSongActive();
         }
 
         //Random song
@@ -152,10 +158,29 @@ const app = {
             random.classList.toggle("active", _this.isRandom);
         }
 
+        //Repeat song
+        repeat.onclick = function(){
+            _this.isRepeat = !_this.isRepeat;
+            repeat.classList.toggle("active", _this.isRepeat);
+        }
+
+
         //Xử lí khi audio ended
         audio.onended = function(){
-
+            if(_this.isRepeat){
+                audio.play();
+            }else{
+                next.click();
+            }
         }
+    },
+    scrollToSongActive: function () {
+        setTimeout(() => {
+            $(".song.active").scrollIntoView({
+              behavior: "smooth",
+              block: "nearest"
+            });
+        }, 300);
     },
     loadCurrentSong: function(){
         heading.innerText = this.currentSong.name;
@@ -177,15 +202,14 @@ const app = {
         this.loadCurrentSong();  
     },
     randomSong: function () {
-        let arrayIndex = [];
         let newIndex;
+
         do{
             newIndex = Math.floor(Math.random()*this.songs.length);
-            arrayIndex.splice(0,0,newIndex);
         }while(newIndex === this.currentIndex);
-        console.log(arrayIndex)
-        // this.currentIndex = newIndex;
-        // this.loadCurrentSong();
+
+        this.currentIndex = newIndex;
+        this.loadCurrentSong();
     },
     start: function(){
         //Định nghĩa thuộc tính cho object
